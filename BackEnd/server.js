@@ -14,7 +14,6 @@ mongoose.connect('mongodb://localhost:27017/Todo-app', {
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error(err));
 
-
   // Middlewares
 app.use(cors());
 app.use(bodyParser.json());
