@@ -11,8 +11,8 @@
     confirmPassword  : String,
     todo: [
       {
-        type: String,
-        required: false,
+        text: String,
+        completed: Boolean,
       },
     ],
 

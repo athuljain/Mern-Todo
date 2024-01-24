@@ -19,5 +19,17 @@ app.use(cors());
 app.use(bodyParser.json());
 
 
+app.use(cors({
+  origin: 'http://localhost:3000',  // Replace with your front-end URL
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+}));
+
+
+const userRoute = require('./routes/userRoute')
+
+app.use("/user",userRoute)
+
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`));
