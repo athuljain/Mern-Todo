@@ -15,6 +15,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser()); // Use cookie-parser middleware
 
 app.post("/register", user.userRegister);
+app.post("/login",user.userLogin)
 
 
 module.exports = app;
