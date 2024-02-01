@@ -2,22 +2,11 @@
 
 
 const express = require("express");
-const cookieParser = require("cookie-parser");
-const app = express();
 
-const user = require("../contoller/user");
-const bodyParser = require("body-parser");
+const {userLogin,userRegister}=require('../contoller/user')
+const router = express.Router();
 
+router.post("/login", userLogin);
+router.post("/register", userRegister);
 
-
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(cookieParser()); // Use cookie-parser middleware
-
-app.post("/register", user.userRegister);
-app.post("/login",user.userLogin)
-
-
-module.exports = app;
-
-
+module.exports = router;

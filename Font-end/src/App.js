@@ -5,6 +5,7 @@ import Register from './Component/Register.jsx';
 import { myContext } from './Context.js';
 import { useState } from 'react';
 import Login from './Component/Login.jsx';
+import TodoHome from './Component/TodoHome.jsx';
 
 
 function App() {
@@ -24,6 +25,7 @@ const values={user,setUser}
     <Routes>
        <Route path='/' element={<Login />}/>
        <Route path='/register' element={<Register />}/>
+       <Route path='/todo' element={<TodoHome />} />
      
     </Routes>
     </myContext.Provider>

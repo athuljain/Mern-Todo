@@ -1,96 +1,40 @@
-const bcrypt = require("bcrypt");
+// const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 
-const schema = require('../model/userModel')
+const User = require('../model/userModel')
 
+const createToken=(_id)=>{
+  return jwt.sign({_id},process.env.JWT_SECRET,{expiresIn:"3d"})
+}
 
-const userRegister = async (req, res) => {
-  try {
-    const { name, email, password, confirmPassword } = req.body;
+const userRegister=async (req,res)=>{
+  const {email,password ,userName}=req.body
 
-    if (password !== confirmPassword) {
-      return res.status(400).send("Passwords do not match");
-    }
-
-    const userExists = await schema.findOne({ email });
-
-    if (userExists) {
-      return res.status(400).send("User already exists");
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    // Create user object without confirmPassword
-    const user = new schema({ name, email, password: hashedPassword });
-
-    await user.save();
-    res.status(201).send("User registered successfully");
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Registration failed");
+  try{
+    const user=await User.signup(email,password,userName)
+    const token=createToken(user._id)
+    res.status(200).json({userName, token})
+  }catch(error){
+    res.status(400).json({error:error.message})
   }
-};
+}
 
 
-// Login
-// const userLogin = async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     const user = await schema.findOne({ email });
-
-//     if (user && (await bcrypt.compare(password, user.password))) {
-//       const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET,{
-//         expiresIn:"1hr"
-//       });
-
-//       res.cookie("token", token, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60, });
-//       res.setHeader("Authorization", token);
-//       console.log(token, "requested token");
-    
-      
-
-//       res.status(200).json({message :"welcome user", token});
-
-//     } else {
-//       res.status(401).send("Invalid email or password");
-//     }
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).send("Login failed");
-//   }
- 
-// };
-
-const userLogin = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const user = await schema.findOne({ email });
-
-    if (user && (await bcrypt.compare(password, user.password))) {
-      const token = jwt.sign({ email: user.email, userId: user._id }, process.env.JWT_SECRET, {
-        expiresIn: "1hr",
-      });
-
-      res.cookie("token", token, { httpOnly: true, secure: true, maxAge: 1000 * 60 * 60 });
-
-      // Set token in headers
-      res.setHeader("Authorization", token);
-
-      // Log a part of the token for debugging
-      console.log("Generated token:", token.substring(0, 10) + "...");
-      
-      res.status(200).json({ message: "Welcome user", token });
-    } else {
-      res.status(401).send("Invalid email or password");
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Login failed");
+const userLogin=async (req,res)=>{
+  const { email, password } = req.body;
+  try{
+    const user=await User.login(email,password)
+    const token=createToken(user._id)
+    const userName=user.userName;
+    res.status(200).json({ userName, token });
+  }catch (error) {
+    res.status(400).json({ error: error.message });
   }
-};
+}
+
+module.exports={
+  userRegister,userLogin
+}
 
 
-  module.exports={
-    userRegister,
-    userLogin,
-  }
+
