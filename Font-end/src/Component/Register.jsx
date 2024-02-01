@@ -1,67 +1,33 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import { Col, Button, Row, Container, Card, Form } from 'react-bootstrap';
-import { myContext } from '../Context';
-import axios from 'axios';  // Add this line
-import { Link, useNavigate } from 'react-router-dom';
-// import "../Styles/Register.css"
-
+import axios from 'axios';
+import { Link } from 'react-router-dom';
 
 export default function Register() {
-  const { user, setUser } = useContext(myContext);
-  const [name, setName] = useState('');
+  const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const nav=useNavigate()
-
 
   const handleRegistration = async (e) => {
     e.preventDefault();
-    
-    if (!name || !email || !password || !confirmPassword) {
-        return alert("Please fill in all fields");
-      }
-      if (password !== confirmPassword) {
-        return alert("Passwords do not match");
-      }
 
     try {
-      // Create a new user object
-      const newUser = {
-        name,
-        email,
-        password,
-        confirmPassword
-      };
+      const response = await axios.post('http://localhost:8080/user/register', {
+        userName: userName,
+        email: email,
+        password: password
+      });
 
-
-      // Make an API request to register the user
-      const response = await axios.post('http://localhost:5000/user/register', newUser);
-
-
-      // Handle the response from the server
-      console.log(response.data); // Assuming the server responds with a message
-      alert("user Register success!!!!!")
-
-      nav("/")
-
-      // You can also handle success in other ways, e.g., redirect the user to a login page.
-
-
-      // Clear the form fields
-      setName('');
-      setEmail('');
-      setPassword('');
-      setConfirmPassword('');
+      console.log('Registration successful:', response.data);
+      // Handle success, for example, redirecting the user to a different page
+      // You can use useNavigate hook from react-router-dom
+      // const navigate = useNavigate();
+      // navigate('/success');
     } catch (error) {
-      // Handle registration failure
-      console.error('Registration failed:', error.response.data);
-      // You can update the state or show an error message to the user
-      alert("Registration Failed")
+      console.error('Registration failed:', error);
+      // Handle error, for example, displaying an error message to the user
     }
   };
-
 
   return (
     <div>
@@ -81,11 +47,10 @@ export default function Register() {
                         <Form.Control
                           type="text"
                           placeholder="Enter Name"
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
+                          value={userName}
+                          onChange={(e) => setUserName(e.target.value)}
                         />
                       </Form.Group>
-
 
                       <Form.Group className="mb-3" controlId="formBasicEmail">
                         <Form.Label className="text-center">
@@ -99,7 +64,6 @@ export default function Register() {
                         />
                       </Form.Group>
 
-
                       <Form.Group
                         className="mb-3"
                         controlId="formBasicPassword"
@@ -112,15 +76,7 @@ export default function Register() {
                           onChange={(e) => setPassword(e.target.value)}
                         />
                       </Form.Group>
-                      <Form.Group className="mb-3" controlId="formBasicConfirmPassword">
-  <Form.Label>Confirm Password</Form.Label>
-  <Form.Control
-    type="password"
-    placeholder="Confirm Password"
-    value={confirmPassword}
-    onChange={(e) => setConfirmPassword(e.target.value)}
-  />
-</Form.Group>
+
                       <Form.Group
                         className="mb-3"
                         controlId="formBasicCheckbox"
@@ -134,7 +90,7 @@ export default function Register() {
                     <div className="mt-3">
                       <p className="mb-0 text-center">
                         Already have an account??{' '}
-                        <Link to={'/'}  className="text-primary fw-bold">
+                        <Link to={'/'} className="text-primary fw-bold">
                           Sign In
                         </Link>
                       </p>
