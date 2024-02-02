@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Col, Button, Row, Container, Card, Form } from 'react-bootstrap';
 import axios from 'axios';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 export default function Register() {
   const [userName, setUserName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+
+  const nav=useNavigate()
 
   const handleRegistration = async (e) => {
     e.preventDefault();
@@ -19,10 +21,8 @@ export default function Register() {
       });
 
       console.log('Registration successful:', response.data);
-      // Handle success, for example, redirecting the user to a different page
-      // You can use useNavigate hook from react-router-dom
-      // const navigate = useNavigate();
-      // navigate('/success');
+      alert("registarion success")
+      nav('/')
     } catch (error) {
       console.error('Registration failed:', error);
       // Handle error, for example, displaying an error message to the user
