@@ -1,13 +1,11 @@
 const express = require('express');
 const cors = require('cors');
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
+
 
 require('dotenv').config();
 
 const app = express();
-const port = process.env.PORT || 8080;
 
 // Connect to MongoDB
 mongoose.connect('mongodb://localhost:27017/Todo-app', {
@@ -17,19 +15,35 @@ mongoose.connect('mongodb://localhost:27017/Todo-app', {
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.error(err));
 
-// Middlewares
-app.use(cors({
-  origin: 'http://localhost:3000',  // Replace with your front-end URL
-  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-  credentials: true,
-}));
-app.use(cookieParser());
-app.use(bodyParser.json());
+
+
+// cors
+app.use(cors({ origin: true, credentials: true }));
+
+
+
 
 const userRoute = require('./routes/userRoute');
-const todoRoute = require('./routes/todoRoute');
+// const todoRoute = require('./routes/todoRoute');
 
 app.use("/user", userRoute);
-app.use('/todo', todoRoute);
+// app.use('/todo', todoRoute);
 
-app.listen(port, () => console.log(`Server started on port ${port}`));
+// app.listen(port, () => console.log(`Server started on port ${port}`));
+
+// initialize middleware
+app.use(express.json({ extended: false }));
+app.get("/", (req, res) => res.send("server is active"));
+
+// use routes
+
+const todo= require("./routes/todoRoute")
+app.use("/api/todo", todo);
+
+// setting up port
+
+const PORT = process.env.PORT || 8000;
+
+app.listen(PORT, () => {
+    console.log(`server is running on http://localhost:${PORT}`);
+});

@@ -11,9 +11,31 @@ export default function TodoHome() {
     fetchTodos();
   }, []);
 
+  // const fetchTodos = async () => {
+  //   try {
+  //     const response = await axios.get('http://localhost:8080/todo'); // Updated endpoint
+  //     setTodos(response.data);
+  //     setError(null); // Clear any previous errors
+  //   } catch (error) {
+  //     console.error('Error fetching todos:', error);
+  //     setError('Failed to fetch todos. Please try again later.'); // Set error message
+  //   }
+  // };
+
+  const getToken = () => {
+    // Retrieve the authentication token from local storage or wherever it's stored
+    return localStorage.getItem('token');
+  };
+  
+
   const fetchTodos = async () => {
     try {
-      const response = await axios.get('http://localhost:8080/todo'); // Updated endpoint
+      const token = getToken(); // Function to retrieve authentication token from storage
+      const response = await axios.get('http://localhost:8080/todo/', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
       setTodos(response.data);
       setError(null); // Clear any previous errors
     } catch (error) {
@@ -21,6 +43,7 @@ export default function TodoHome() {
       setError('Failed to fetch todos. Please try again later.'); // Set error message
     }
   };
+  
 
   const handleCreateTodo = async () => {
     try {

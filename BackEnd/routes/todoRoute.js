@@ -1,30 +1,44 @@
-const express = require("express");
-const {
-  getTodos,
-  createTodo,
-  deleteTodo,
-  updateTodo,
-  getTodo,
-} = require("../contoller/todoController");
 
-const requireAuth = require("../middileware/userMiddileware");
+const express = require("express");
 
 const router = express.Router();
 
-router.get("/test", (req, res) => {
-  res.status(200).json({ message: "Hello. Done!" });
-});
+const {
+    getAllTodo,
+    postCreateTodo,
+    putUpdateTodo,
+    deleteTodo,
+} = require("../contoller/todoController");
 
-router.use(requireAuth);
+/**
+ * @route GET api/todo
+ * @description get all todos
+ * @access public
+ */
 
-router.get("/", getTodos);
+router.get("/", getAllTodo);
 
-router.get("/:id", getTodo);
+/**
+ * @route POST api/todo
+ * @description Add a new TODO
+ * @access public
+ */
 
-router.post("/", createTodo);
+router.post("/", postCreateTodo);
+
+/**
+ * @route PUT api/todo/:id
+ * @description update todo
+ * @access public
+ */
+router.put("/:id", putUpdateTodo);
+
+/**
+ * @route DELETE api/todo/:id
+ * @description delete todo by id
+ * @access public
+ */
 
 router.delete("/:id", deleteTodo);
-
-router.patch("/:id", updateTodo);
 
 module.exports = router;

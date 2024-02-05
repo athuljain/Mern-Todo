@@ -1,100 +1,58 @@
-const mongoose = require("mongoose");
-const Todos = require("../model/todoModel");
 
-const getTodos = async (req, res) => {
-  try {
-    const uid = req.user._id;
-    const todos = await Todos.find({ uid }).sort({ createdAt: -1 });
-    res.status(200).json(todos);
-  } catch (error) {
-    res.status(400).json({ error: "error.message" });
-  }
+
+const Todo = require("../model/todoModel");
+
+exports.getAllTodo = (req, res) => {
+    Todo.find()
+        .then((todo) => {
+            console.log({ todo });
+            res.json(todo);
+        })
+        .catch((err) =>
+            res
+                .status(404)
+                .json({ message: "no todo found", error: err.message })
+        );
 };
 
-const getTodo = async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(400).json({ error: "No such document" });
-  }
-
-  try {
-    const todo = await Todos.findById({ _id: id });
-
-    if (!todo) {
-      return res.status(404).json({ message: "No such document" });
-    }
-
-    res.status(200).json(todo);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+exports.postCreateTodo = (req, res) => {
+    Todo.create(req.body)
+        .then((data) => {
+            console.log({ data });
+            res.json({ message: "todo added successfully", data });
+        })
+        .catch((err) =>
+            res.status(400).json({
+                message: "unable to add new todo",
+                error: err.message,
+            })
+        );
 };
 
-const createTodo = async (req, res) => {
-  const { todo } = req.body;
-
-  try {
-    const uid = req.user._id;
-    const todos = await Todos.create({
-      todo,
-      uid,
-    });
-    res.status(200).json(todos);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
+exports.putUpdateTodo = (req, res) => {
+    console.log("id: ", req.params.id);
+    console.log("body: ", req.body);
+    Todo.findByIdAndUpdate(req.params.id, req.body)
+        .then((todo) => {
+            console.log("edit", { todo });
+            return res.json({ message: "updated successfully", todo });
+        })
+        .catch((err) =>
+            res
+                .status(400)
+                .json({ error: "unable to update todo", message: err.message })
+        );
 };
 
-const deleteTodo = async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No such document." });
-  }
-
-  try {
-    const todos = await Todos.findByIdAndDelete({ _id: id });
-
-    if (!todos) {
-      return res.status(404).json({ message: "No such document" });
-    }
-
-    res.status(200).json(todos);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-const updateTodo = async (req, res) => {
-  const { id } = req.params;
-
-  if (!mongoose.Types.ObjectId.isValid(id)) {
-    return res.status(404).json({ error: "No such document." });
-  }
-
-  try {
-    const todos = await Todos.findByIdAndUpdate(
-      { _id: id },
-      {
-        ...req.body,
-      }
-    );
-
-    if (!todos) {
-      return res.status(404).json({ message: "No such document" });
-    }
-
-    res.status(200).json(todos);
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-};
-
-module.exports = {
-  getTodos,
-  getTodo,
-  createTodo,
-  deleteTodo,
-  updateTodo,
+exports.deleteTodo = (req, res) => {
+  Todo.findOneAndDelete({ _id: req.params.id })
+      .then((data) => {
+          if (!data) {
+              return res.status(404).json({ error: "Todo not found" });
+          }
+          res.json({ message: "Todo deleted successfully", data });
+      })
+      .catch((err) => {
+          res.status(500).json({ error: "Internal server error", message: err.message });
+      });
 };
