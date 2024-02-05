@@ -1,9 +1,6 @@
-
-
-
 const express = require("express");
 
-const {userLogin,userRegister}=require('../contoller/user')
+const { userLogin, userRegister } = require("../contoller/user");
 const router = express.Router();
 
 router.post("/login", userLogin);
