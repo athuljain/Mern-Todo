@@ -19,4 +19,28 @@ router.post('/register', async (req, res) => {
     }
 });
 
+
+// Sign in
+router.post("/login", async (req, res) => {
+    try {
+       const user = await User.findOne({ email: req.body.email });
+       if (!user) {
+           return res.status(400).json({ message: "User not found. Please sign up first." });
+       }
+       
+       const isPasswordCorrect = bcrypt.compareSync(req.body.password, user.password);
+       if (!isPasswordCorrect) {
+           return res.status(400).json({ message: "Password incorrect." });
+       }
+
+       // If password is correct, send user data (excluding password) in response
+       const { password, ...others } = user._doc;
+       res.status(200).json({ user: others });
+    } catch (error) {
+        res.status(500).json({ message: "Internal server error." });
+    }
+});
+
+
+
 module.exports = router;
