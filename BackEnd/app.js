@@ -15,5 +15,5 @@ app.get("/",(req,res)=>{
 app.use("/api/v1",auth)
 
 app.listen(1000,()=>{
-    console.log("server connected");
+    console.log("server connected - 1000");
 })
