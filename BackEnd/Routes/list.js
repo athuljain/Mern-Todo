@@ -77,8 +77,12 @@ router.delete("/deleteTask/:id", async (req, res) => {
 //getTask
 
 router.get("/getTask/:id",async(req,res)=>{
-    const list=await List.find({user:req.params.id})
-    res.status(200).json({list})
+    const list=await List.find({user:req.params.id}).sort({createdAt:-1})
+   if(list.length !==0){
+    res.status(200).json({list:list})
+   }else{
+    res.status(200).json({"message":"no task"})
+   }
 })
 
 
