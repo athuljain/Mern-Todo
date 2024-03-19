@@ -1,19 +1,18 @@
 const mongoose = require("mongoose");
 
-const connectToDB = async (req,res) => {
+
+const connectToDB = async () => {
     try {
         await mongoose.connect("mongodb+srv://athuljainkj2:Todo-Application1@cluster0.2xfps3x.mongodb.net/");
         console.log("Connected to the database");
     } catch (error) {
-        res.status(400).json({
-            message:"not connected"
-
-        })
         console.error("Error connecting to the database:", error);
+        throw error; // Throw the error to handle it outside
     }
 };
 
+module.exports=connectToDB
 
-connectToDB();
+// connectToDB();
 
 
